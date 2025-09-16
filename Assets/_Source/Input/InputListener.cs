@@ -67,7 +67,7 @@ public class InputListener : MonoBehaviour
     }
     void OnLeftMouseClick(InputAction.CallbackContext callbackContext)
     {
-        if (!callbackContext.ReadValueAsButton()) return;
+        if (!callbackContext.ReadValueAsButton() || UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = _camera.nearClipPlane;
         Ray ray = _camera.ScreenPointToRay(mousePosition);

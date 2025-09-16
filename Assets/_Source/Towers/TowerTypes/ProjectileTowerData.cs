@@ -1,7 +1,8 @@
 using UnityEngine;
+using DG.Tweening;
 
-[CreateAssetMenu(fileName = "LineShootTowerData", menuName = "Scriptable Objects/Towers/New Line Shooting Tower Data"), System.Serializable]
-public class LineShootTowerData : TowerDataSO
+[CreateAssetMenu(fileName = "ProjectileTowerData", menuName = "Scriptable Objects/Towers/New Projectile Shooting Tower Data"), System.Serializable]
+public class ProjectileTowerData : TowerDataSO
 {
     [Header("Tower type settings")]
     [field: SerializeField]
@@ -10,7 +11,7 @@ public class LineShootTowerData : TowerDataSO
     [field: SerializeField]
     public GameObject ProjectilePrefab { get; protected set; }
     [field: SerializeField]
-    public float ProjectileDeathTime { get; protected set; }
+    public float ProjectileSpeed { get; protected set; }
     [field: SerializeField]
     public float ExplosionSize { get; protected set; }
     [Header("Tower type Visual movement settings")]
@@ -89,35 +90,45 @@ public class LineShootTowerData : TowerDataSO
         {
             damagable.Damage(BaseDamage);
         }
-        if (ProjectilePrefab != null&&shootOrigin != null)
+        if (ProjectilePrefab != null && shootOrigin != null)
         {
             GameObject projectile = Instantiate(ProjectilePrefab, null, true);
-            float deathtime = ProjectileDeathTime > 0 ? ProjectileDeathTime : 0.2f;
             Vector3 difference = target.transform.position - shootOrigin.position;
-            projectile.transform.position = difference / 2 + shootOrigin.position;
-            projectile.transform.LookAt(shootOrigin.position+difference);
-            projectile.transform.localScale = new Vector3(1, 1,Vector3.Distance(shootOrigin.position,target.transform.position));
-            Destroy(projectile, deathtime);
-        }  
-        if (ExplosionSize > 0)
-        {
-            RaycastHit[] hits = Physics.SphereCastAll(new Ray(target.transform.position,(tower.transform.position-target.transform.position).normalized), ExplosionSize);
-            if (hits != null && hits.Length >= 1)
+            projectile.transform.position = shootOrigin.position;
+            projectile.transform.LookAt(shootOrigin.position + difference);
+            float tottalFlightTime = Vector3.Distance(shootOrigin.position, target.transform.position) / ProjectileSpeed;
+            Tween tween = projectile.transform.DOMove(target.transform.position, tottalFlightTime);
+            tween.OnComplete(() =>
             {
-                foreach (RaycastHit hit in hits)
+                Destroy(projectile);
+                if (ExplosionSize > 0)
                 {
-                    if (hit.collider != null && hit.collider.gameObject != null && hit.collider.gameObject != target && hit.collider.gameObject.TryGetComponent<IDamagable>(out IDamagable component))
+                    Vector3 normalized = (tower.transform.position - target.transform.position).normalized;
+                    RaycastHit[] hits = Physics.SphereCastAll(new Ray(target.transform.position,normalized), ExplosionSize);
+                    if (hits != null && hits.Length >= 1)
                     {
-                        component.Damage(BaseDamage);
+                        foreach (RaycastHit hit in hits)
+                        {
+                            if (hit.collider != null
+                            && hit.collider.gameObject != null
+                            && hit.collider.gameObject != target
+                            && hit.collider.gameObject.TryGetComponent(out IDamagable component))
+                            {
+                                component.Damage(BaseDamage);
+                            }
+                        }
                     }
-                }
-            }
-        }  
+                } 
+            });
+        }   
     }
 
     public override void OnUpgrade(TowerBaseHandler parent,GameObject oldTower)
     {
-        if (NextUpgradeTower != null && parent != null&& NextUpgradeTower.BaseCost > 0 && ResourceManager.instance.CanBuy(NextUpgradeTower.BaseCost))
+        if (NextUpgradeTower != null
+        && parent != null
+        && NextUpgradeTower.BaseCost > 0
+        && ResourceManager.instance.CanBuy(NextUpgradeTower.BaseCost))
         {
             Destroy(oldTower);
             parent.PlaceTower(NextUpgradeTower);
