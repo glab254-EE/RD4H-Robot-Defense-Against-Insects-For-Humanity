@@ -16,11 +16,17 @@ public class ResourceManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
-        Resource = 0;
+    }
+    internal bool CanBuy(double ammount)
+    {
+        if (Resource == 0 || Resource < ammount) return false;
+        return true;
     }
     internal bool TryBuy(double ammount)
     {
         if (Resource == 0 || Resource < ammount) return false;
+        Resource -= ammount;
+        Debug.Log(Resource);
         return true;
     }
     internal void Gain(double ammount)
@@ -31,5 +37,6 @@ public class ResourceManager : MonoBehaviour
     {
         if (enemy == null || enemy.EnemyCost <= 0) return;
         Resource += enemy.EnemyCost;
+        Debug.Log(Resource);
     }
 }

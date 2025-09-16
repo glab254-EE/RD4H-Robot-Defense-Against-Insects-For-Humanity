@@ -15,5 +15,7 @@ MonoBehaviour:
   <EnemyName>k__BackingField: Tester
   <EnemyModel>k__BackingField: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
   <EnemySize>k__BackingField: {x: 2, y: 2, z: 2}
+  <EnemyAgentHeightOffset>k__BackingField: 1
   <EnemySpeed>k__BackingField: 1
   <EnemyMaxHealth>k__BackingField: 5
+  <EnemyCost>k__BackingField: 0

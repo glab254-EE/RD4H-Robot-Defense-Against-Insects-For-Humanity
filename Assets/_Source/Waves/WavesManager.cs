@@ -5,7 +5,7 @@ public class WavesManager : MonoBehaviour
 {
     [field: SerializeField]
     internal List<EnemyWave> waves;
-    private double tick;
+    private float time;
     private bool started;
     void Start()
     {

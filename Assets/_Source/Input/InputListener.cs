@@ -6,11 +6,14 @@ using UnityEngine.InputSystem;
 public class InputListener : MonoBehaviour
 {
     [field: SerializeField]
+    private GameObject ReferenceTowerSelectorTemplate;
+    [field: SerializeField]
     private CinemachineInputAxisController cameraInputActions;
     [field: SerializeField]
     private LayerMask towerBaseMask;
     private InputSystem_Actions inputActions;
     private Camera _camera;
+    private GameObject CurrentOpenUI;
     void Start()
     {
         _camera = Camera.main;
@@ -33,6 +36,7 @@ public class InputListener : MonoBehaviour
     }
     void ToggleCameraMovementState(bool state)
     {
+        Cursor.lockState = state ? CursorLockMode.Confined : CursorLockMode.None;
         if (state)
         {
             if (!inputActions.Player.Zoom.enabled) inputActions.Player.Zoom.Enable();
@@ -67,11 +71,20 @@ public class InputListener : MonoBehaviour
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = _camera.nearClipPlane;
         Ray ray = _camera.ScreenPointToRay(mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, 150, towerBaseMask))
+        if (Physics.Raycast(ray, out RaycastHit hit, 250, towerBaseMask))
         {
             if (hit.collider.gameObject.TryGetComponent<TowerBaseHandler>(out _))
             {
-                // TODO: IMPLEMENT TOWER PLACING
+                if (CurrentOpenUI != null)
+                {
+                    Destroy(CurrentOpenUI);
+                }
+                CurrentOpenUI = Instantiate(ReferenceTowerSelectorTemplate,hit.transform.position,Quaternion.identity,hit.transform);
+                CurrentOpenUI.transform.localPosition = new Vector3(0, 2, 0);
+                if (CurrentOpenUI.TryGetComponent<TowerSelectorBehaivor>(out TowerSelectorBehaivor component))
+                {
+                    component.towerBaseModule = hit.transform.gameObject;
+                }
             }
         }
     }

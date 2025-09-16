@@ -2,21 +2,24 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class TowerBaseHandler : MonoBehaviour
 {
-    [field:SerializeField]
+    [field: SerializeField]
     private GameObject towerPrefab;
     [Space]
     [field: SerializeField]
     private TowerDataSO currentTowerSO;
     [field: SerializeField]
     private Collider rangeBox;
+    [field: SerializeField]
+    private TowerRangeboxBehaivor towerRangebox;
     private GameObject currentTowerObject;
     private GameObject target;
     private List<GameObject> potentialTargets;
+    private bool isTowerPlaced;
     void Start()
     {
+        isTowerPlaced = false;
         if (rangeBox == null) rangeBox = GetComponent<Collider>();
         GameManager.instance.ConnectEvent(OnTick, 0);
         if (currentTowerSO != null)
@@ -25,38 +28,36 @@ public class TowerBaseHandler : MonoBehaviour
             currentTowerSO = null;
             PlaceTower(temp);
         }
+        if (towerRangebox == null)
+        {
+            towerRangebox = GetComponentInChildren<TowerRangeboxBehaivor>();
+        }
+        potentialTargets = new();
     }
     void OnTick()
     {
-        Debug.Log("Tick!");
-        if (currentTowerObject == null || currentTowerSO == null) return;
-        currentTowerSO.OnTick(gameObject,potentialTargets, target);
-    }
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider != null && collision.collider.gameObject != null && potentialTargets.Contains(collision.gameObject) == false)
+        if (currentTowerSO == null) return;
+        if (currentTowerObject == null)
         {
-            potentialTargets.Add(collision.gameObject);
-            if (target == null)
-            {
-                target = collision.gameObject;
-            }
+            currentTowerSO = null;
+            return;
         }
-    }
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.collider != null && collision.collider.gameObject != null && potentialTargets.Contains(collision.gameObject) == true)
+        if (towerRangebox!=null && towerRangebox.TryGetLists(out target, out potentialTargets))
         {
-            potentialTargets.Remove(collision.gameObject);
-            if (target != null && target == collision.gameObject)
-            {
-                target = potentialTargets.First();
-            }
-        }        
+            currentTowerSO.OnTick(currentTowerObject, potentialTargets, target);            
+        }
     }
     internal void PlaceTower(TowerDataSO newTower)
     {
         if (currentTowerSO != null || currentTowerObject != null || newTower == null) return;
+        /*if (isTowerPlaced)
+        {
+            if (!ResourceManager.instance.TryBuy(newTower.BaseCost))
+            {
+                Debug.LogWarning("Potential exploiting detected.");
+                return;
+            }
+        }*/ 
         currentTowerSO = newTower;
         currentTowerObject = Instantiate(towerPrefab, transform, false);
         if (rangeBox is SphereCollider && newTower.BaseRange >= 0)
@@ -66,7 +67,7 @@ public class TowerBaseHandler : MonoBehaviour
         }
         if (newTower.Animator != null && currentTowerObject.TryGetComponent<Animator>(out Animator animator))
         {
-            // TODO: ADD ANIMATIONS AND DAM
+            // TODO: ADD ANIMATIONS AND DAM. DAMN.
         }
         if (newTower.TowerMesh != null)
         {
@@ -76,6 +77,9 @@ public class TowerBaseHandler : MonoBehaviour
                 meshRenderer.mesh = newTower.TowerMesh;
             }
         }
-        currentTowerSO.OnPlace();
+        if (newTower.PositionOffset != null && newTower.PositionOffset.magnitude != 0) currentTowerObject.transform.Translate(newTower.PositionOffset);
+        if (newTower.SizeOffset != null && newTower.SizeOffset.magnitude != 0) currentTowerObject.transform.localScale = newTower.SizeOffset;
+        currentTowerSO.OnPlace(currentTowerObject);
+        isTowerPlaced = true;
     }
 }

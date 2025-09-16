@@ -12,13 +12,22 @@ public class EnemyHandler : MonoBehaviour, IDamagable
     public double MaxHealth { get; private set; }
     [field: SerializeField]
     private EnemySO enemyObject;
-    [field: SerializeField]
-    private UnityEvent<EnemyHandler> onEnemyDeath;
     private Queue<Transform> path;
     private NavMeshAgent agent;
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();    
+        path = new();
+        agent = GetComponent<NavMeshAgent>();
+        if (enemyObject != null)
+        {
+            agent = GetComponent<NavMeshAgent>();
+            agent.baseOffset = enemyObject.EnemyAgentHeightOffset;
+            CurrentHealth = enemyObject.EnemyMaxHealth;
+            if (enemyObject.EnemyModel != null && TryGetComponent<MeshFilter>(out MeshFilter filter))
+            {
+                filter.mesh = enemyObject.EnemyModel;
+            }            
+        }
     }
     void Update()
     {
@@ -30,10 +39,11 @@ public class EnemyHandler : MonoBehaviour, IDamagable
                 agent.SetDestination(next.position);
             }
         }
-        if (CurrentHealth <= 0)
+        if (CurrentHealth <= 0 && agent.speed > 0)
         {
             agent.speed = 0;
-            onEnemyDeath.Invoke(this);
+            ResourceManager.instance.MoneyGainFromEnemy(enemyObject);
+            Destroy(gameObject, 5);
         }
     }
     void IDamagable.Damage(double Damage)

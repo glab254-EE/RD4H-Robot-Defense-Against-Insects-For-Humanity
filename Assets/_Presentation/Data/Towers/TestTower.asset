@@ -12,8 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd09063dac93484428bce187d10be505, type: 3}
   m_Name: TestTower
   m_EditorClassIdentifier: 
+  <TowerName>k__BackingField: Hawk towah
   <Animator>k__BackingField: {fileID: 0}
-  <TowerMesh>k__BackingField: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
-  <BaseDamage>k__BackingField: 0
-  <BaseRange>k__BackingField: 15
+  <TowerMesh>k__BackingField: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  <PositionOffset>k__BackingField: {x: 0, y: 1, z: 0}
+  <SizeOffset>k__BackingField: {x: 0, y: 0, z: 0}
+  <BaseDamage>k__BackingField: 1
+  <BaseRange>k__BackingField: 624.48
+  <BaseCost>k__BackingField: 1
+  <NextUpgradeTower>k__BackingField: {fileID: 0}
   <BaseCooldown>k__BackingField: 2
+  <ProjectilePrefab>k__BackingField: {fileID: 6821080871197616559, guid: 8b4d1bfa86d5e12408ddf48f9a85bdc7, type: 3}
+  <ProjectileDeathTime>k__BackingField: 0.2
+  <ExplosionSize>k__BackingField: 4
+  <MoveFullTowerWithEnemy>k__BackingField: 1
+  <MoveOriginWithEnemy>k__BackingField: 1
+  <BarrelName>k__BackingField: shootOrigin
+  <ShootingPartName>k__BackingField: shootPart
+  <BarrelDifferencePosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <ShootingPartDifferencePosition>k__BackingField: {x: 0, y: 0, z: 0}
