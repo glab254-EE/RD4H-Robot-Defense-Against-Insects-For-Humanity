@@ -22,7 +22,7 @@ public abstract class TowerDataSO : ScriptableObject
     [field: SerializeField]
     public float BaseRange { get; protected set; }
     [field: SerializeField]
-    public float BaseCost { get; protected set; }
+    public SDouble BaseCost { get; protected set; }
     [field: SerializeField]
     public TowerDataSO NextUpgradeTower { get; protected set; }
     public abstract void OnTick(GameObject tower, List<GameObject> enemies, GameObject currenttarget);

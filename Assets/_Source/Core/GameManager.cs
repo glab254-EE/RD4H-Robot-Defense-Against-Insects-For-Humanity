@@ -7,8 +7,6 @@ public class GameManager : MonoBehaviour
     [field: SerializeField]
     private bool paused = false;
     [field: SerializeField]
-    private float tickMultiplier = 1f;
-    [field: SerializeField]
     private float TickDuration = 0.2f;
     private UnityEvent beforeOnTick;
     private UnityEvent onTick;
@@ -30,7 +28,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (paused) return;
-        currentTick += Time.deltaTime * tickMultiplier;
+        currentTick += Time.deltaTime;
         if (currentTick >= TickDuration)
         {
             currentTick = 0;

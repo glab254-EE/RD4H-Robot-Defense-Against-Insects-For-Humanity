@@ -11,17 +11,15 @@ public class TowerRangeboxBehaivor : MonoBehaviour
     }
     private void OnTriggerEnter(Collider collision)
     {
-        Debug.Log("New enemy?");
         if (collision.gameObject != null && collision.gameObject.CompareTag("Enemy") && potentialTargets.Contains(collision.gameObject) == false && collision.gameObject.TryGetComponent<EnemyHandler>(out EnemyHandler damagable))
         {
             if (damagable.CurrentHealth > 0)
             {
-            Debug.Log("New enemy!!");
-            potentialTargets.Add(collision.gameObject);
-            if (target == null)
-            {
-                target = collision.gameObject;
-            }                
+                potentialTargets.Add(collision.gameObject);
+                if (target == null)
+                {
+                    target = collision.gameObject;
+                }
             }
         }
     }
@@ -36,8 +34,24 @@ public class TowerRangeboxBehaivor : MonoBehaviour
             }
         }
     }
+    private void ChecklistForDead()
+    {
+        for (int i = 0; i < potentialTargets.Count; i++)
+        {
+            if (potentialTargets.Count <= i) continue;
+            if (potentialTargets[i].TryGetComponent(out EnemyHandler handler))
+            {
+                if (handler.CurrentHealth <= 0) potentialTargets.RemoveAt(i);
+            }
+            else
+            {
+                potentialTargets.RemoveAt(i);
+            }
+        }
+    }
     internal bool TryGetLists(out GameObject _target, out List<GameObject> potential)
     {
+        ChecklistForDead();
         _target = target;
         potential = potentialTargets;
         return true;

@@ -18,6 +18,6 @@ public class ResourceCounter : MonoBehaviour
             resourceManagerReference = ResourceManager.instance;
             return;
         }
-        textLabel.text = resourceManagerReference.Resource + " Resource";
+        textLabel.text = resourceManagerReference.Resource.ToString() + " Resource";
     }
 }

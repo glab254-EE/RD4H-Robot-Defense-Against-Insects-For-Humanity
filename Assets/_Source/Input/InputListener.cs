@@ -73,11 +73,15 @@ public class InputListener : MonoBehaviour
         Ray ray = _camera.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 250, towerBaseMask))
         {
-            if (hit.collider.gameObject.TryGetComponent<TowerBaseHandler>(out _))
+            if (hit.collider.gameObject.TryGetComponent<TowerBaseHandler>(out TowerBaseHandler TowerBase))
             {
                 if (CurrentOpenUI != null)
                 {
                     Destroy(CurrentOpenUI);
+                }
+                if (TowerBase.currentTowerSO != null)
+                {
+                    return;
                 }
                 CurrentOpenUI = Instantiate(ReferenceTowerSelectorTemplate,hit.transform.position,Quaternion.identity,hit.transform);
                 CurrentOpenUI.transform.localPosition = new Vector3(0, 2, 0);

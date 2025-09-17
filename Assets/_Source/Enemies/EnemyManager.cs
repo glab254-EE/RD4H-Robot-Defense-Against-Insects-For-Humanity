@@ -5,9 +5,9 @@ using UnityEngine.Events;
 public class EnemyManager : MonoBehaviour
 {
     [field: SerializeField]
-    private static GameObject EnemyObjectReference;
+    internal GameObject EnemyObjectReference;
     public static EnemyManager instance { get; private set; }
-    internal static Queue<Transform> enemyPath; 
+    internal static Queue<Transform> enemyPath;
     void Start()
     {
         if (instance != null)
@@ -16,29 +16,39 @@ public class EnemyManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
+        RenewPath();
     }
-    public static void OnEnemyDeath(EnemyHandler enemy)
+    public void OnEnemyDeath(EnemyHandler enemy)
     {
         if (enemy != null && enemy.CurrentHealth <= 0)
         {
-            // TODO: ADD REWARDING FOR THIS.    
+            ResourceManager.instance.MoneyGainFromEnemy(enemy.enemyObject);
+            Destroy(gameObject, 0);  
         }
     }
-    public static void SpawnEnemy(EnemySO enemyToSpawn)
+    public void SpawnEnemy(EnemySO enemyToSpawn)
     {
         if (enemyToSpawn == null) return;
+        if (instance != null&&instance != this)
+        {
+            instance.SpawnEnemy(enemyToSpawn);
+            return;
+        }
         if (enemyPath == null || enemyPath.Count <= 0)
         {
             instance.RenewPath();
         }
+        Queue<Transform> newEnemyPath = enemyPath;
+        Transform startingPoint = newEnemyPath.Dequeue();
+        GameObject newEnemy = Instantiate(EnemyObjectReference, startingPoint.position, Quaternion.identity);
+        if (newEnemy.TryGetComponent<EnemyHandler>(out EnemyHandler enemyHandler))
+        {
+            enemyHandler.SetUp(enemyToSpawn, newEnemyPath);
+        }
         else
         {
-            Transform startingPoint = enemyPath.Peek();
-            GameObject newEnemy = Instantiate(EnemyObjectReference, startingPoint.position, Quaternion.identity);
-            if (newEnemy.TryGetComponent<EnemyHandler>(out EnemyHandler enemyHandler))
-            {
-                enemyHandler.SetUp(enemyToSpawn, enemyPath);
-            }
+            Debug.LogWarning("Warning, enemy " + enemyToSpawn.EnemyName + " Did not had enemyHandler. Despawning to prevent bugs");
+            Destroy(newEnemy);
         }
     }
     protected internal void RenewPath()

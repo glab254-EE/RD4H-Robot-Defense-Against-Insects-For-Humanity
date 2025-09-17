@@ -96,7 +96,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5, z: -5}
-  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_LocalScale: {x: 2, y: 0.5, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8220216181673023903}
@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towerPrefab: {fileID: 4464101158524934351, guid: 8a273d21648cf844d9db730f8b437b06, type: 3}
-  currentTowerSO: {fileID: 0}
+  <currentTowerSO>k__BackingField: {fileID: 0}
   rangeBox: {fileID: 3883802746898677599}
   towerRangebox: {fileID: 3479853760816909881}
 --- !u!65 &2540184666130214651

@@ -17,13 +17,15 @@ MonoBehaviour:
   <TowerMesh>k__BackingField: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   <PositionOffset>k__BackingField: {x: 0, y: 1, z: 0}
   <SizeOffset>k__BackingField: {x: 0, y: 0, z: 0}
-  <BaseDamage>k__BackingField: 0
+  <BaseDamage>k__BackingField: 4
   <BaseRange>k__BackingField: 10
-  <BaseCost>k__BackingField: 1
+  <BaseCost>k__BackingField:
+    offset: 5554
+    value: 5556
   <NextUpgradeTower>k__BackingField: {fileID: 0}
-  <BaseCooldown>k__BackingField: 4
+  <BaseCooldown>k__BackingField: 5
   <ProjectilePrefab>k__BackingField: {fileID: 8861417528886581130, guid: e743b95a697712348a6d40f6db5bd59c, type: 3}
-  <ProjectileSpeed>k__BackingField: 1
+  <ProjectileSpeed>k__BackingField: 4
   <ExplosionSize>k__BackingField: 5
   <MoveFullTowerWithEnemy>k__BackingField: 1
   <MoveOriginWithEnemy>k__BackingField: 1

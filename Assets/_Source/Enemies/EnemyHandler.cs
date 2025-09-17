@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Accessibility;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
@@ -11,70 +13,83 @@ public class EnemyHandler : MonoBehaviour, IDamagable
     public double CurrentHealth { get; private set; }
     public double MaxHealth { get; private set; }
     [field: SerializeField]
-    private EnemySO enemyObject;
+    internal EnemySO enemyObject { get; private set; }
     private Queue<Transform> path;
     private NavMeshAgent agent;
     void Start()
     {
-        path = new();
         agent = GetComponent<NavMeshAgent>();
         if (enemyObject != null)
         {
             agent = GetComponent<NavMeshAgent>();
             agent.baseOffset = enemyObject.EnemyAgentHeightOffset;
             CurrentHealth = enemyObject.EnemyMaxHealth;
-            if (enemyObject.EnemyModel != null && TryGetComponent<MeshFilter>(out MeshFilter filter))
-            {
-                filter.mesh = enemyObject.EnemyModel;
-            }            
         }
     }
     void Update()
     {
         if (agent != null)
         {
-            if ((agent.isStopped||agent.destination == null) &&path.Count >= 1)
+            Debug.Log(agent.destination);
+            if (path != null && (agent.destination == null || Vector3.Distance(transform.position, agent.destination) <= agent.stoppingDistance))
             {
-                Transform next = path.Dequeue();
-                agent.SetDestination(next.position);
+                Debug.Log(path);
+                if (path.Count >= 1)
+                {
+                    Transform next = path.Dequeue();
+                    if (!agent.SetDestination(next.position))
+                    {
+                        agent.destination = next.position;
+                    }
+                    Debug.Log(agent.destination);
+                }
+                else
+                {
+                    if (CurrentHealth > 0 && agent.speed > 0)
+                    {
+                        agent.speed = 0;
+                        ResourceManager.instance.OnEnemyFinishPath(enemyObject);
+                        Destroy(gameObject);
+                    }
+                }
             }
+        }
+        else
+        {
+            agent = GetComponent<NavMeshAgent>();
         }
         if (CurrentHealth <= 0 && agent.speed > 0)
         {
+            agent.isStopped = true;
             agent.speed = 0;
-            ResourceManager.instance.MoneyGainFromEnemy(enemyObject);
-            Destroy(gameObject, 5);
+            EnemyManager.instance.OnEnemyDeath(this);
         }
     }
     void IDamagable.Damage(double Damage)
     {
         CurrentHealth = Math.Clamp(CurrentHealth - Damage, 0, CurrentHealth);
     }
- /*   internal void SetUp(EnemySO enemy, List<Transform> newPath)
-    {
-        if (enemy == null || enemyObject != null || newPath == null) return;
-        agent = GetComponent<NavMeshAgent>();
-        agent.baseOffset = enemy.EnemyAgentHeightOffset;
-        enemyObject = enemy;
-        CurrentHealth = enemy.EnemyMaxHealth;
-        if (enemy.EnemyModel != null && TryGetComponent<MeshFilter>(out MeshFilter filter))
-        {
-            filter.mesh = enemy.EnemyModel;
-        }
-        path = new();
-        path.Union(newPath);
-    }*/
     internal void SetUp(EnemySO enemy, Queue<Transform> newPath)
     {
-        if (enemy == null || enemyObject != null || newPath == null) return;
+        if (enemy == null || newPath == null)
+        {
+            Debug.LogWarning("Failed to set-up; enemy == null => " + enemy == null + "OR SMTH WITH PATH");
+            return;
+        }
+        if (enemy.EnemyVisualModel != null)
+        {
+            GameObject Visual = Instantiate(enemy.EnemyVisualModel, transform);
+            Visual.transform.localPosition = enemy.EnemyVisualOffset != null ? enemy.EnemyVisualOffset : Vector3.zero;
+        }
+        if (enemy.EnemySize != null && enemy.EnemySize != Vector3.zero)
+        {
+            transform.localScale = enemy.EnemySize;
+        }
         agent = GetComponent<NavMeshAgent>();
         agent.baseOffset = enemy.EnemyAgentHeightOffset;
+        agent.speed = enemy.EnemySpeed;
         enemyObject = enemy;
         CurrentHealth = enemy.EnemyMaxHealth;
-        if (enemy.EnemyModel != null && TryGetComponent<MeshFilter>(out MeshFilter filter))
-        {
-            filter.mesh = enemy.EnemyModel;
-        }
         path = newPath;
     }
 }

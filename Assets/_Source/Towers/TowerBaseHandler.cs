@@ -6,9 +6,8 @@ public class TowerBaseHandler : MonoBehaviour
 {
     [field: SerializeField]
     private GameObject towerPrefab;
-    [Space]
     [field: SerializeField]
-    private TowerDataSO currentTowerSO;
+    internal TowerDataSO currentTowerSO{ get; private set; }
     [field: SerializeField]
     private Collider rangeBox;
     [field: SerializeField]
@@ -16,10 +15,8 @@ public class TowerBaseHandler : MonoBehaviour
     private GameObject currentTowerObject;
     private GameObject target;
     private List<GameObject> potentialTargets;
-    private bool isTowerPlaced;
     void Start()
     {
-        isTowerPlaced = false;
         if (rangeBox == null) rangeBox = GetComponent<Collider>();
         GameManager.instance.ConnectEvent(OnTick, 0);
         if (currentTowerSO != null)
@@ -80,6 +77,5 @@ public class TowerBaseHandler : MonoBehaviour
         if (newTower.PositionOffset != null && newTower.PositionOffset.magnitude != 0) currentTowerObject.transform.Translate(newTower.PositionOffset);
         if (newTower.SizeOffset != null && newTower.SizeOffset.magnitude != 0) currentTowerObject.transform.localScale = newTower.SizeOffset;
         currentTowerSO.OnPlace(currentTowerObject);
-        isTowerPlaced = true;
     }
 }
