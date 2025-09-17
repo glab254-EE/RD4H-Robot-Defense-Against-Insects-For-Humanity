@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class TowerRangeboxBehaivor : MonoBehaviour
 {
@@ -11,9 +12,13 @@ public class TowerRangeboxBehaivor : MonoBehaviour
     }
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject != null && collision.gameObject.CompareTag("Enemy") && potentialTargets.Contains(collision.gameObject) == false && collision.gameObject.TryGetComponent<EnemyHandler>(out EnemyHandler damagable))
+        if (collision.gameObject != null
+        && collision.gameObject.CompareTag("Enemy")
+        && potentialTargets.Contains(collision.gameObject) == false
+        && collision.gameObject.TryGetComponent(out EnemyHandler damagable)
+        && collision.gameObject.TryGetComponent(out NavMeshAgent agent))
         {
-            if (damagable.CurrentHealth > 0)
+            if (damagable.CurrentHealth > 0 && agent.speed > 0)
             {
                 potentialTargets.Add(collision.gameObject);
                 if (target == null)
@@ -38,20 +43,40 @@ public class TowerRangeboxBehaivor : MonoBehaviour
     {
         for (int i = 0; i < potentialTargets.Count; i++)
         {
-            if (potentialTargets.Count <= i) continue;
+            if (potentialTargets.Count <= i || potentialTargets[i] == null) continue;
+            if (potentialTargets[i] == null)
+            {
+                potentialTargets.Remove(potentialTargets[i]);
+                continue;
+            }
             if (potentialTargets[i].TryGetComponent(out EnemyHandler handler))
             {
-                if (handler.CurrentHealth <= 0) potentialTargets.RemoveAt(i);
+                if (handler.CurrentHealth <= 0)
+                {
+                    if (potentialTargets[i] == target)
+                    {
+                        target = potentialTargets.Count >= 1 ? potentialTargets[0] : null;
+                    }
+                    potentialTargets.Remove(potentialTargets[i]);
+                }
             }
             else
             {
-                potentialTargets.RemoveAt(i);
+                if (potentialTargets[i] == target)
+                {
+                    target = potentialTargets.Count >= 1 ? potentialTargets[0] : null;
+                }
+                potentialTargets.Remove(potentialTargets[i]);
             }
         }
     }
     internal bool TryGetLists(out GameObject _target, out List<GameObject> potential)
     {
         ChecklistForDead();
+        if (target == null && potentialTargets.Count >= 1)
+        {
+            target = potentialTargets[1];
+        }
         _target = target;
         potential = potentialTargets;
         return true;

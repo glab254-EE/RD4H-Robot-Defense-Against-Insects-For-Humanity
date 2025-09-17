@@ -23,7 +23,7 @@ public class EnemyManager : MonoBehaviour
         if (enemy != null && enemy.CurrentHealth <= 0)
         {
             ResourceManager.instance.MoneyGainFromEnemy(enemy.enemyObject);
-            Destroy(gameObject, 0);  
+            Destroy(enemy.gameObject, 0);  
         }
     }
     public void SpawnEnemy(EnemySO enemyToSpawn)
@@ -38,7 +38,7 @@ public class EnemyManager : MonoBehaviour
         {
             instance.RenewPath();
         }
-        Queue<Transform> newEnemyPath = enemyPath;
+        Queue<Transform> newEnemyPath = new(enemyPath);
         Transform startingPoint = newEnemyPath.Dequeue();
         GameObject newEnemy = Instantiate(EnemyObjectReference, startingPoint.position, Quaternion.identity);
         if (newEnemy.TryGetComponent<EnemyHandler>(out EnemyHandler enemyHandler))

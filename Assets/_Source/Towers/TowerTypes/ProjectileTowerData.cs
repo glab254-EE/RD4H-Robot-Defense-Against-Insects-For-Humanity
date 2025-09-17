@@ -84,6 +84,11 @@ public class ProjectileTowerData : TowerDataSO
     private void OnShoot(GameObject tower,GameObject target)
     {
         if (target.transform == null) return;
+        Animator animator = tower.GetComponentInChildren<Animator>();
+        if (animator != null)
+        {
+            animator.SetTrigger("fire");
+        }
         barrelOrigin = tower.transform.Find(BarrelName);
         if (barrelOrigin != null) shootOrigin = barrelOrigin.Find(ShootingPartName);
         if (target.TryGetComponent<IDamagable>(out IDamagable damagable))

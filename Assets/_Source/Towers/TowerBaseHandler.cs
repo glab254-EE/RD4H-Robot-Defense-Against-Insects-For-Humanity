@@ -33,7 +33,7 @@ public class TowerBaseHandler : MonoBehaviour
     }
     void OnTick()
     {
-        if (currentTowerSO == null) return;
+        if (currentTowerSO == null || gameObject == null) return;
         if (currentTowerObject == null)
         {
             currentTowerSO = null;
@@ -66,12 +66,16 @@ public class TowerBaseHandler : MonoBehaviour
         {
             // TODO: ADD ANIMATIONS AND DAM. DAMN.
         }
-        if (newTower.TowerMesh != null)
+        if (newTower.TowerVisualPrefab != null)
         {
-            MeshFilter meshRenderer = currentTowerObject.GetComponentInChildren<MeshFilter>();
-            if (meshRenderer != null)
+            GameObject cloned = Instantiate(newTower.TowerVisualPrefab, currentTowerObject.transform);
+            if (newTower.PositionOffset != Vector3.zero)
             {
-                meshRenderer.mesh = newTower.TowerMesh;
+                cloned.transform.localPosition = newTower.PositionOffset;
+            }
+            if (newTower.SizeOffset != Vector3.zero)
+            {
+                cloned.transform.localScale = newTower.SizeOffset;
             }
         }
         if (newTower.PositionOffset != null && newTower.PositionOffset.magnitude != 0) currentTowerObject.transform.Translate(newTower.PositionOffset);

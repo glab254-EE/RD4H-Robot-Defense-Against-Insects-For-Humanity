@@ -11,13 +11,13 @@ public abstract class TowerDataSO : ScriptableObject
     [field: SerializeField]
     public Animator Animator { get; protected set; }
     [field: SerializeField]
-    public Mesh TowerMesh { get; protected set; }
+    public GameObject TowerVisualPrefab { get; protected set; }
     [field: SerializeField]
     public Vector3 PositionOffset { get; protected set; }
     [field: SerializeField]
     public Vector3 SizeOffset { get; protected set; }
-    [field: SerializeField]
     [Header("Tower Behaivor")]
+    [field: SerializeField]
     public double BaseDamage { get; protected set; }
     [field: SerializeField]
     public float BaseRange { get; protected set; }

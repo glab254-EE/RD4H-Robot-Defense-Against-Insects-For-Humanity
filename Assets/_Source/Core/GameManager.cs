@@ -44,17 +44,53 @@ public class GameManager : MonoBehaviour
     public void ConnectEvent(UnityAction unityEvent, int eventType)
     {
         if (unityEvent == null) return;
-        switch (eventType)
+        try
         {
-            case 1:
-                afterOnTick.AddListener(unityEvent);
-                break;
-            case -1:
-                beforeOnTick.AddListener(unityEvent);
-                break;
-            default:
-                onTick.AddListener(unityEvent);
-                break;
+            switch (eventType)
+            {
+                case 1:
+                    afterOnTick.AddListener(unityEvent);
+                    break;
+                case -1:
+                    beforeOnTick.AddListener(unityEvent);
+                    break;
+                default:
+                    onTick.AddListener(unityEvent);
+                    break;
+            }
         }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("Failed to add listener: " + e.Message);
+        }
+    }
+    public void DissconnectEvent(UnityAction unityEvent, int eventType)
+    {
+        if (unityEvent == null) return;
+        try
+        {
+            switch (eventType)
+            {
+                case 1:
+                    afterOnTick.RemoveListener(unityEvent);
+                    break;
+                case -1:
+                    beforeOnTick.RemoveListener(unityEvent);
+                    break;
+                default:
+                    onTick.RemoveListener(unityEvent);
+                    break;
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("Failed to remove listener: " + e.Message);
+        }
+    }
+    void OnDestroy()
+    {
+        afterOnTick.RemoveAllListeners();
+        beforeOnTick.RemoveAllListeners();
+        onTick.RemoveAllListeners();
     }
 }

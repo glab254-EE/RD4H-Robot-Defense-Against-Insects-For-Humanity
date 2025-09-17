@@ -13,22 +13,24 @@ public class TowerSelectorBehaivor : MonoBehaviour
     [field: SerializeField]
     private Transform towerSelectorParent;
     private List<TowerDataSO> towerSelections;
+    private Transform cameraTransform;
     private Camera _camera;
     void Start()
     {
         towerSelections = new();
-        _camera = Camera.main;
-        GetComponent<Canvas>().worldCamera = _camera;
         if (TowersManager.instance.TryRequestTowersList(out towerSelections))
         {
             UpdateTowerSelection();
         }
+        _camera = Camera.main;
+        cameraTransform = _camera.transform;
+        GetComponent<Canvas>().worldCamera = _camera;
     }
-    void Update()
+    void LateUpdate()
     {
-        if (_camera != null)
+        if (cameraTransform != null)
         {
-            transform.LookAt(transform.position-_camera.transform.position);
+            transform.LookAt(2*transform.position-cameraTransform.transform.position);
         }
     }
     void UpdateTowerSelection()

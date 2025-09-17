@@ -20,10 +20,10 @@ MonoBehaviour:
   <BaseDamage>k__BackingField: 1
   <BaseRange>k__BackingField: 6
   <BaseCost>k__BackingField:
-    offset: 0
-    value: 1
+    offset: 556
+    value: 557
   <NextUpgradeTower>k__BackingField: {fileID: 0}
-  <BaseCooldown>k__BackingField: 3
+  <BaseCooldown>k__BackingField: 4
   <ProjectilePrefab>k__BackingField: {fileID: 6821080871197616559, guid: 8b4d1bfa86d5e12408ddf48f9a85bdc7, type: 3}
   <ProjectileDeathTime>k__BackingField: 0.2
   <ExplosionSize>k__BackingField: 0

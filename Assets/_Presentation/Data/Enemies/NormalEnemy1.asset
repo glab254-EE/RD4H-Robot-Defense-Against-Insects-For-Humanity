@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <EnemyName>k__BackingField: Lesser Insectoid
   <EnemyVisualModel>k__BackingField: {fileID: 5467452715563288199, guid: 5bb3c2d8989e1f64da18cf358387bc78, type: 3}
-  <EnemySize>k__BackingField: {x: 0.5, y: 0.5, z: 0.7}
+  <EnemySize>k__BackingField: {x: 0.5, y: 0.5, z: 0.5}
   <EnemyVisualOffset>k__BackingField: {x: 0, y: 1.15, z: -0.25}
   <EnemyAgentHeightOffset>k__BackingField: 0
   <EnemySpeed>k__BackingField: 5
