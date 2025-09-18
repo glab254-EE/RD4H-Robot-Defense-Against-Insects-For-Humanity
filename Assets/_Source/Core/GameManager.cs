@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance { get; private set; }
     [field: SerializeField]
-    private bool paused = false;
+    internal bool paused = false;
     [field: SerializeField]
     private float TickDuration = 0.2f;
     private UnityEvent beforeOnTick;
@@ -27,6 +27,11 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
+        if (!paused && ResourceManager.instance.currentLives.GetValue() <= 0)
+        {
+            paused = true;
+            return;
+        }
         if (paused) return;
         currentTick += Time.deltaTime;
         if (currentTick >= TickDuration)

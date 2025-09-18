@@ -11,6 +11,10 @@ public class InputListener : MonoBehaviour
     private CinemachineInputAxisController cameraInputActions;
     [field: SerializeField]
     private LayerMask towerBaseMask;
+    [field: SerializeField]
+    private Transform canvasParent;
+    [field: SerializeField]
+    private GameObject pauseScreenPrefab;
     private InputSystem_Actions inputActions;
     private Camera _camera;
     private GameObject CurrentOpenUI;
@@ -21,6 +25,8 @@ public class InputListener : MonoBehaviour
         inputActions.Player.SelectOrPlace.performed += OnLeftMouseClick;
         inputActions.Player.ToggleMoveCamera.performed += OnRightMouseToggle;
         inputActions.Player.ToggleMoveCamera.canceled += OnRightMouseToggle;
+        inputActions.Player.Pause.performed += TogglePause;
+        inputActions.Player.Pause.Enable();
         inputActions.Player.ToggleMoveCamera.Enable();
         inputActions.Player.SelectOrPlace.Enable();
         cameraInputActions.enabled = false;
@@ -30,6 +36,7 @@ public class InputListener : MonoBehaviour
         inputActions.Player.SelectOrPlace.performed -= OnLeftMouseClick;
         inputActions.Player.ToggleMoveCamera.performed -= OnRightMouseToggle;
         inputActions.Player.ToggleMoveCamera.canceled -= OnRightMouseToggle;
+        inputActions.Player.Pause.performed -= TogglePause;
         inputActions.Player.ToggleMoveCamera.Disable();
         inputActions.Player.SelectOrPlace.Disable();
         inputActions.Disable();
@@ -53,6 +60,26 @@ public class InputListener : MonoBehaviour
             controller.Enabled = state;
         }
     }
+    void TogglePause(InputAction.CallbackContext callbackContext)
+    {
+        if (GameManager.instance.paused)
+        {
+            if (CurrentOpenUI != null)
+            {
+                Destroy(CurrentOpenUI);
+            }
+            GameManager.instance.paused = false;
+        }
+        else
+        {
+            if (CurrentOpenUI != null)
+            {
+                Destroy(CurrentOpenUI);
+            }
+            CurrentOpenUI = Instantiate(pauseScreenPrefab, canvasParent);
+            GameManager.instance.paused = true;
+        }
+    }
     void OnRightMouseToggle(InputAction.CallbackContext callbackContext)
     {
         ToggleCameraMovementState(callbackContext.ReadValueAsButton());
@@ -67,7 +94,7 @@ public class InputListener : MonoBehaviour
     }
     void OnLeftMouseClick(InputAction.CallbackContext callbackContext)
     {
-        if (!callbackContext.ReadValueAsButton() || UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
+        if (!callbackContext.ReadValueAsButton() || UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() || GameManager.instance.paused) return;
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = _camera.nearClipPlane;
         Ray ray = _camera.ScreenPointToRay(mousePosition);

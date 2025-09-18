@@ -37,7 +37,7 @@ public class LineShootTowerData : TowerDataSO
         }
         if (shootOrigin == null && barrelOrigin != null)
         {
-            shootOrigin = tower.transform.Find(BarrelName);
+            shootOrigin = barrelOrigin.Find(ShootingPartName);
         }
         if (barrelOrigin != null && shootOrigin != null)
         {
@@ -90,7 +90,7 @@ public class LineShootTowerData : TowerDataSO
         }
         barrelOrigin = tower.transform.Find(BarrelName);
         if (barrelOrigin != null) shootOrigin = barrelOrigin.Find(ShootingPartName);
-        if (target.TryGetComponent<IDamagable>(out IDamagable damagable))
+        if (target.TryGetComponent(out IDamagable damagable))
         {
             damagable.Damage(BaseDamage);
         }
@@ -106,12 +106,17 @@ public class LineShootTowerData : TowerDataSO
         }  
         if (ExplosionSize > 0)
         {
-            RaycastHit[] hits = Physics.SphereCastAll(new Ray(target.transform.position,(tower.transform.position-target.transform.position).normalized), ExplosionSize);
+            Vector3 normalized = (tower.transform.position - target.transform.position).normalized;
+            Vector3 hitOrigin = target.transform.position - normalized * ExplosionSize;
+            RaycastHit[] hits = Physics.SphereCastAll(new Ray(hitOrigin,normalized), ExplosionSize);
             if (hits != null && hits.Length >= 1)
             {
                 foreach (RaycastHit hit in hits)
                 {
-                    if (hit.collider != null && hit.collider.gameObject != null && hit.collider.gameObject != target && hit.collider.gameObject.TryGetComponent<IDamagable>(out IDamagable component))
+                    if (hit.collider != null
+                    && hit.collider.gameObject != null
+                    && hit.collider.gameObject != target
+                    && hit.collider.gameObject.TryGetComponent(out IDamagable component))
                     {
                         component.Damage(BaseDamage);
                     }

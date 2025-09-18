@@ -75,7 +75,7 @@ public class TowerRangeboxBehaivor : MonoBehaviour
         ChecklistForDead();
         if (target == null && potentialTargets.Count >= 1)
         {
-            target = potentialTargets[1];
+            target = potentialTargets[0];
         }
         _target = target;
         potential = potentialTargets;

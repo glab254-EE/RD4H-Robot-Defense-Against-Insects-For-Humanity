@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.AI;
 
 [CreateAssetMenu(fileName = "ProjectileTowerData", menuName = "Scriptable Objects/Towers/New Projectile Shooting Tower Data"), System.Serializable]
 public class ProjectileTowerData : TowerDataSO
@@ -91,7 +92,7 @@ public class ProjectileTowerData : TowerDataSO
         }
         barrelOrigin = tower.transform.Find(BarrelName);
         if (barrelOrigin != null) shootOrigin = barrelOrigin.Find(ShootingPartName);
-        if (target.TryGetComponent<IDamagable>(out IDamagable damagable))
+        if (target.TryGetComponent(out IDamagable damagable))
         {
             damagable.Damage(BaseDamage);
         }
@@ -100,16 +101,22 @@ public class ProjectileTowerData : TowerDataSO
             GameObject projectile = Instantiate(ProjectilePrefab, null, true);
             Vector3 difference = target.transform.position - shootOrigin.position;
             projectile.transform.position = shootOrigin.position;
-            projectile.transform.LookAt(shootOrigin.position + difference);
             float tottalFlightTime = Vector3.Distance(shootOrigin.position, target.transform.position) / ProjectileSpeed;
-            Tween tween = projectile.transform.DOMove(target.transform.position, tottalFlightTime);
+            Vector3 targetPosition = target.transform.position;
+            if (target.TryGetComponent(out NavMeshAgent agent))
+            {
+                targetPosition += agent.velocity;//*tottalFlightTime;
+            }
+            projectile.transform.LookAt(targetPosition);
+            Tween tween = projectile.transform.DOMove(targetPosition, tottalFlightTime);
             tween.OnComplete(() =>
             {
                 Destroy(projectile);
                 if (ExplosionSize > 0)
                 {
                     Vector3 normalized = (tower.transform.position - target.transform.position).normalized;
-                    RaycastHit[] hits = Physics.SphereCastAll(new Ray(target.transform.position,normalized), ExplosionSize);
+                    Vector3 hitOrigin = target.transform.position - normalized * ExplosionSize;
+                    RaycastHit[] hits = Physics.SphereCastAll(new Ray(hitOrigin,normalized), ExplosionSize);
                     if (hits != null && hits.Length >= 1)
                     {
                         foreach (RaycastHit hit in hits)
@@ -123,7 +130,7 @@ public class ProjectileTowerData : TowerDataSO
                             }
                         }
                     }
-                } 
+                }  
             });
         }   
     }

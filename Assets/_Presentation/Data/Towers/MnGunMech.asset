@@ -9,26 +9,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd09063dac93484428bce187d10be505, type: 3}
-  m_Name: TestTower
+  m_Script: {fileID: 11500000, guid: bde57c0c0b726c24395fd7be7bca17dd, type: 3}
+  m_Name: MnGunMech
   m_EditorClassIdentifier: 
-  <TowerName>k__BackingField: Hawk towah
+  <TowerName>k__BackingField: Minigun Mech
   <Animator>k__BackingField: {fileID: 0}
-  <TowerMesh>k__BackingField: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  <PositionOffset>k__BackingField: {x: 0, y: 1, z: 0}
+  <TowerVisualPrefab>k__BackingField: {fileID: 5403102770822464746, guid: 769a63f0704603244a0764c87a3cbc93, type: 3}
+  <PositionOffset>k__BackingField: {x: 0, y: 1, z: -0.054071426}
   <SizeOffset>k__BackingField: {x: 0, y: 0, z: 0}
   <BaseDamage>k__BackingField: 1
-  <BaseRange>k__BackingField: 6
+  <BaseRange>k__BackingField: 10
   <BaseCost>k__BackingField:
-    offset: 556
-    value: 557
+    offset: 5554
+    value: 5555
   <NextUpgradeTower>k__BackingField: {fileID: 0}
   <BaseCooldown>k__BackingField: 4
-  <ProjectilePrefab>k__BackingField: {fileID: 6821080871197616559, guid: 8b4d1bfa86d5e12408ddf48f9a85bdc7, type: 3}
-  <ProjectileDeathTime>k__BackingField: 0.2
-  <ExplosionSize>k__BackingField: 0
+  <ProjectilePrefab>k__BackingField: {fileID: 8861417528886581130, guid: e743b95a697712348a6d40f6db5bd59c, type: 3}
+  <ProjectileSpeed>k__BackingField: 25
+  <ExplosionSize>k__BackingField: 1
   <MoveFullTowerWithEnemy>k__BackingField: 1
-  <MoveOriginWithEnemy>k__BackingField: 1
+  <MoveOriginWithEnemy>k__BackingField: 0
   <BarrelName>k__BackingField: shootOrigin
   <ShootingPartName>k__BackingField: shootPart
   <BarrelDifferencePosition>k__BackingField: {x: 0, y: 0, z: 0}

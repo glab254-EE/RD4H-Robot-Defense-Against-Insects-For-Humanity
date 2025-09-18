@@ -62,9 +62,13 @@ public class TowerBaseHandler : MonoBehaviour
             SphereCollider sphereCollider = rangeBox as SphereCollider;
             sphereCollider.radius = newTower.BaseRange;
         }
-        if (newTower.Animator != null && currentTowerObject.TryGetComponent<Animator>(out Animator animator))
+        if (newTower.Animator != null)
         {
-            // TODO: ADD ANIMATIONS AND DAM. DAMN.
+            Animator potentialAnimator = currentTowerObject.GetComponentInChildren<Animator>();
+            if (potentialAnimator != null)
+            {
+                potentialAnimator.runtimeAnimatorController = newTower.Animator;
+            }
         }
         if (newTower.TowerVisualPrefab != null)
         {
@@ -78,8 +82,6 @@ public class TowerBaseHandler : MonoBehaviour
                 cloned.transform.localScale = newTower.SizeOffset;
             }
         }
-        if (newTower.PositionOffset != null && newTower.PositionOffset.magnitude != 0) currentTowerObject.transform.Translate(newTower.PositionOffset);
-        if (newTower.SizeOffset != null && newTower.SizeOffset.magnitude != 0) currentTowerObject.transform.localScale = newTower.SizeOffset;
         currentTowerSO.OnPlace(currentTowerObject);
     }
 }

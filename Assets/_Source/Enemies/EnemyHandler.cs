@@ -30,10 +30,8 @@ public class EnemyHandler : MonoBehaviour, IDamagable
     {
         if (agent != null)
         {
-            Debug.Log(agent.destination);
             if (path != null && (agent.destination == null || Vector3.Distance(transform.position, agent.destination) <= agent.stoppingDistance))
             {
-                Debug.Log(path);
                 if (path.Count >= 1)
                 {
                     Transform next = path.Dequeue();
@@ -41,7 +39,6 @@ public class EnemyHandler : MonoBehaviour, IDamagable
                     {
                         agent.destination = next.position;
                     }
-                    Debug.Log(agent.destination);
                 }
                 else
                 {
@@ -68,6 +65,12 @@ public class EnemyHandler : MonoBehaviour, IDamagable
     void IDamagable.Damage(double Damage)
     {
         CurrentHealth = Math.Clamp(CurrentHealth - Damage, 0, CurrentHealth);
+        if (CurrentHealth <= 0 && agent.speed > 0)
+        {
+            agent.isStopped = true;
+            agent.speed = 0;
+            EnemyManager.instance.OnEnemyDeath(this);
+        }
     }
     internal void SetUp(EnemySO enemy, Queue<Transform> newPath)
     {

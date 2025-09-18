@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class EnemyManager : MonoBehaviour
 {
+    public static EnemyManager instance { get; private set; }
     [field: SerializeField]
     internal GameObject EnemyObjectReference;
-    public static EnemyManager instance { get; private set; }
     internal static Queue<Transform> enemyPath;
+    private Dictionary<GameObject,float> currentEnemiesAndTheirSpeeds;
     void Start()
     {
         if (instance != null)
@@ -17,19 +19,24 @@ public class EnemyManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
         RenewPath();
+        currentEnemiesAndTheirSpeeds = new();
+    }
+    void LateUpdate()
+    {
+        CheckAndStopEnemiesForPause();
     }
     public void OnEnemyDeath(EnemyHandler enemy)
     {
         if (enemy != null && enemy.CurrentHealth <= 0)
         {
             ResourceManager.instance.MoneyGainFromEnemy(enemy.enemyObject);
-            Destroy(enemy.gameObject, 0);  
+            Destroy(enemy.gameObject, 0);
         }
     }
     public void SpawnEnemy(EnemySO enemyToSpawn)
     {
-        if (enemyToSpawn == null) return;
-        if (instance != null&&instance != this)
+        if (enemyToSpawn == null || ResourceManager.instance.currentLives.GetValue() <= 0) return;
+        if (instance != null && instance != this)
         {
             instance.SpawnEnemy(enemyToSpawn);
             return;
@@ -50,6 +57,7 @@ public class EnemyManager : MonoBehaviour
             Debug.LogWarning("Warning, enemy " + enemyToSpawn.EnemyName + " Did not had enemyHandler. Despawning to prevent bugs");
             Destroy(newEnemy);
         }
+        currentEnemiesAndTheirSpeeds.Add(newEnemy, enemyToSpawn.EnemySpeed);
     }
     protected internal void RenewPath()
     {
@@ -61,6 +69,37 @@ public class EnemyManager : MonoBehaviour
                 return;
             }
             enemyPath = EnemyPathingManager.GetPath();
+        }
+    }
+    private void CheckAndStopEnemiesForPause()
+    {
+        if (GameManager.instance.paused)
+        {
+            foreach (KeyValuePair<GameObject, float> pair in currentEnemiesAndTheirSpeeds)
+            {
+                if (pair.Key == null)
+                {
+                    continue;
+                }
+                if (pair.Key.TryGetComponent(out NavMeshAgent agent))
+                {
+                    agent.speed = 0;
+                }
+            }
+        }
+        else
+        {
+            foreach (KeyValuePair<GameObject, float> pair in currentEnemiesAndTheirSpeeds)
+            {
+                if (pair.Key == null)
+                {
+                    continue;
+                }
+                if (pair.Key.TryGetComponent(out NavMeshAgent agent))
+                {
+                    agent.speed = pair.Value;
+                }
+            }            
         }
     }
 }

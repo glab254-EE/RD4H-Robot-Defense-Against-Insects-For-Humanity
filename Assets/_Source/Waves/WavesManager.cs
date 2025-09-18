@@ -20,6 +20,7 @@ public class WavesManager : MonoBehaviour
     }
     void Update()
     {
+        paused = GameManager.instance.paused;
         if (!paused && !isSpawningWave)
         {
             if (remainingTimeForNextWave <= 0)
@@ -49,6 +50,13 @@ public class WavesManager : MonoBehaviour
         {
             for (int i = 0; i < wave.Enemies.Count; i++)
             {
+                if (paused)
+                {
+                    do
+                    {
+                        yield return new WaitForEndOfFrame();
+                    } while (paused);
+                }
                 if (wave.Enemies[i] == null)
                 {
                     Debug.LogWarning("No enemy found for wave.Enemies in index " + i);

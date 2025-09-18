@@ -6,9 +6,9 @@ public class ResourceManager : MonoBehaviour
     [field: SerializeField]
     public SDouble Resource { get; private set; }
     [field: SerializeField]
-    public SInt MaxLives { get; set; }
+    public SInt MaxLives { get; private set; }
     internal static ResourceManager instance;
-    private SInt currentLives;
+    internal SInt currentLives { get; private set; }
     void Start()
     {
         currentLives = MaxLives;
@@ -41,7 +41,7 @@ public class ResourceManager : MonoBehaviour
     {
         if (enemy == null || enemy.EnemyCost <= 0) return;
         Resource += enemy.EnemyCost;
-        Debug.Log(Resource);
+//        Debug.Log(Resource);
     }
     internal void OnEnemyFinishPath(EnemySO enemy)
     {

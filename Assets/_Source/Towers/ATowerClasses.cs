@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using System;
+using System.Runtime.InteropServices;
 [System.Serializable]
 public abstract class TowerDataSO : ScriptableObject
 {
@@ -9,7 +10,7 @@ public abstract class TowerDataSO : ScriptableObject
     [field: SerializeField]
     public string TowerName { get; protected set; }
     [field: SerializeField]
-    public Animator Animator { get; protected set; }
+    public RuntimeAnimatorController Animator { get; protected set; }
     [field: SerializeField]
     public GameObject TowerVisualPrefab { get; protected set; }
     [field: SerializeField]
